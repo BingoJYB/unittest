@@ -9,10 +9,16 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class ConverterUtilTest {
 
     int[][] celsiusFahrenheitMapping = new int[][] { { 10, 50 }, { 40, 104 }, { 0, 32 } };
+
+    public static int[][] data() {
+        return new int[][] { { 10, 50 }, { 40, 104 }, { 0, 32 } };
+    }
 
     @TestFactory
     Stream<DynamicTest> ensureThatCelsiumConvertsToFahrenheit() {
@@ -35,5 +41,21 @@ class ConverterUtilTest {
             return DynamicTest.dynamicTest(fahrenheit + " F is " + celsius + " C",
                     () -> assertEquals(celsius, convertFahrenheitToCelsius(fahrenheit)));
         });
+    }
+
+    @ParameterizedTest(name = "{index} called with: {0}")
+    @MethodSource(value = "data")
+    void testWithCelsiumConvertsToFahrenheit(int[] data) {
+        int celsius = data[0];
+        int expected = data[1];
+        assertEquals(expected, convertCelsiusToFahrenheit(celsius));
+    }
+
+    @ParameterizedTest(name = "{index} called with: {0}")
+    @MethodSource(value = "data")
+    void testWithFahrenheitToCelsiumConverts(int[] data) {
+        int fahrenheit = data[1];
+        int expected = data[0];
+        assertEquals(expected, convertFahrenheitToCelsius(fahrenheit));
     }
 }
